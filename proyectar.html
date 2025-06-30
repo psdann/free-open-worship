@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Proyector Multimedia</title>
+    <style>
+        body { 
+            background: #111; 
+            color: #fff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+            font-family: 'Arial', sans-serif;
+        }
+        #contenido { text-align: center; max-width: 90vw; }
+        #referencia, #letra-titulo { font-size: 2em; font-weight: bold; margin-bottom: 20px; color: #ffd700; }
+        #texto, #letra-texto { font-size: 2.2em; line-height: 1.4; }
+        #imagen-proyector { max-width: 90vw; max-height: 80vh; border-radius: 12px; box-shadow: 0 0 20px #0008; }
+        #video-proyector { max-width: 90vw; max-height: 80vh; border-radius: 12px; box-shadow: 0 0 20px #0008; }
+        #mensaje-inicial { font-size: 1.5em; opacity: 0.7; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div id="contenido">
+        <div id="mensaje-inicial">Esperando contenido...</div>
+        <div id="referencia" style="display:none"></div>
+        <div id="texto" style="display:none"></div>
+        <div id="letra-titulo" style="display:none"></div>
+        <div id="letra-texto" style="display:none"></div>
+        <img id="imagen-proyector" style="display:none" />
+        <video id="video-proyector" style="display:none" controls></video>
+    </div>
+    <script>
+        const mensajeInicial = document.getElementById('mensaje-inicial');
+        const referencia = document.getElementById('referencia');
+        const texto = document.getElementById('texto');
+        const letraTitulo = document.getElementById('letra-titulo');
+        const letraTexto = document.getElementById('letra-texto');
+        const imagen = document.getElementById('imagen-proyector');
+        const video = document.getElementById('video-proyector');
+
+        function ocultarTodo() {
+            referencia.style.display = 'none';
+            texto.style.display = 'none';
+            letraTitulo.style.display = 'none';
+            letraTexto.style.display = 'none';
+            imagen.style.display = 'none';
+            video.style.display = 'none';
+            mensajeInicial.style.display = 'none';
+        }
+
+        window.addEventListener('message', function(event) {
+            ocultarTodo();
+            if (event.data) {
+                if (event.data.tipo === 'mostrarVersiculo') {
+                    referencia.textContent = event.data.referencia;
+                    texto.textContent = event.data.texto;
+                    referencia.style.display = 'block';
+                    texto.style.display = 'block';
+                } else if (event.data.tipo === 'mostrarLetra') {
+                    letraTitulo.textContent = event.data.titulo;
+                    letraTexto.innerHTML = event.data.texto.replace(/\n/g, '<br>');
+                    letraTitulo.style.display = 'block';
+                    letraTexto.style.display = 'block';
+                } else if (event.data.tipo === 'mostrarImagen') {
+                    imagen.src = event.data.src;
+                    imagen.style.display = 'block';
+                } else if (event.data.tipo === 'mostrarVideo') {
+                    video.src = event.data.src;
+                    video.style.display = 'block';
+                    video.play();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
